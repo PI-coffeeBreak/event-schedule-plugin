@@ -31,39 +31,6 @@ class WeekDay(int, Enum):
     SATURDAY = 6
 
 
-class ToolbarButton(str, Enum):
-    """Individual buttons for toolbar configuration"""
-    PREV = "prev"
-    NEXT = "next" 
-    TODAY = "today"
-    TITLE = "title"
-    DAYGRID_DAY = "dayGridDay"
-    TIMEGRID_DAY = "timeGridDay"
-    TIMEGRID_WEEK = "timeGridWeek"
-    LIST_DAY = "listDay"
-    LIST_WEEK = "listWeek"
-
-
-class ToolbarButtonGroup(str, Enum):
-    """Common button combinations for toolbar sections"""
-    # Navigation groups
-    NAV_PREV_NEXT = "prev,next"
-    NAV_PREV_NEXT_TODAY = "prev,next today"
-    
-    # Title groups
-    TITLE_ONLY = "title"
-    
-    # Short timeframe view groups
-    VIEW_TODAY = "timeGridDay"
-    VIEW_DAY_WEEK = "timeGridWeek"
-    VIEW_TIMEGRID_DAY_WEEK = "timeGridDay,timeGridWeek"
-    VIEW_LIST_DAY_WEEK = "listDay,listWeek"
-    VIEW_ALL_SHORT = "timeGridDay,timeGridWeek,listDay"
-    
-    # Custom combinations
-    EMPTY = ""  # No buttons
-
-
 class Schedule(BaseComponentSchema):
     """
     Schema for Schedule component using FullCalendar
@@ -79,57 +46,11 @@ class Schedule(BaseComponentSchema):
         default=CalendarView.TIMEGRID_DAY,
         description="The initial view type to display"
     )
-    
-    # Header toolbar with common button combinations
-    headerToolbarLeft: ToolbarButtonGroup = Field(
-        default=ToolbarButtonGroup.NAV_PREV_NEXT_TODAY,
-        description="Left section of the header toolbar"
-    )
-    headerToolbarCenter: ToolbarButtonGroup = Field(
-        default=ToolbarButtonGroup.TITLE_ONLY,
-        description="Center section of the header toolbar"
-    )
-    headerToolbarRight: ToolbarButtonGroup = Field(
-        default=ToolbarButtonGroup.VIEW_DAY_WEEK,
-        description="Right section of the header toolbar"
-    )
-    
-    # Footer toolbar with common button combinations
-    showFooterToolbar: bool = Field(
-        default=False,
-        description="Whether to show the footer toolbar"
-    )
-    footerToolbarLeft: ToolbarButtonGroup = Field(
-        default=ToolbarButtonGroup.EMPTY,
-        description="Left section of the footer toolbar"
-    )
-    footerToolbarCenter: ToolbarButtonGroup = Field(
-        default=ToolbarButtonGroup.EMPTY,
-        description="Center section of the footer toolbar"
-    )
-    footerToolbarRight: ToolbarButtonGroup = Field(
-        default=ToolbarButtonGroup.EMPTY,
-        description="Right section of the footer toolbar"
-    )
 
     # Day/Week Options
     firstDay: WeekDay = Field(
         default=WeekDay.MONDAY,
         description="First day of the week"
-    )
-    
-    # Time Options
-    slotDuration: str = Field(
-        default="00:15:00",
-        description="Duration of time slots (e.g. '00:15:00' for 15 minutes)"
-    )
-    slotMinTime: str = Field(
-        default="08:00:00",
-        description="First time slot displayed"
-    )
-    slotMaxTime: str = Field(
-        default="22:00:00",
-        description="Last time slot displayed"
     )
 
     # Event Options
@@ -157,55 +78,3 @@ class Schedule(BaseComponentSchema):
         default="local",
         description="Calendar timezone (e.g. 'local', 'UTC')"
     )
-
-    # Business hours
-    businessHoursStart: str = Field(
-        default="09:00",
-        description="Start time for business hours (format: 'HH:MM')"
-    )
-    businessHoursEnd: str = Field(
-        default="17:00", 
-        description="End time for business hours (format: 'HH:MM')"
-    )
-    highlightBusinessHours: bool = Field(
-        default=True,
-        description="Whether to visually highlight business hours"
-    )
-    
-    def model_dump(self, *args, **kwargs):
-        """Custom serialization to format the data for FullCalendar"""
-        data = super().model_dump(*args, **kwargs)
-        
-        # Format header toolbar
-        data["headerToolbar"] = {
-            "left": data.pop("headerToolbarLeft"),
-            "center": data.pop("headerToolbarCenter"),
-            "right": data.pop("headerToolbarRight")
-        }
-        
-        # Format footer toolbar if needed
-        show_footer = data.pop("showFooterToolbar")
-        f_left = data.pop("footerToolbarLeft")
-        f_center = data.pop("footerToolbarCenter")
-        f_right = data.pop("footerToolbarRight")
-        
-        if show_footer:
-            data["footerToolbar"] = {
-                "left": f_left,
-                "center": f_center,
-                "right": f_right
-            }
-        
-        # Format business hours
-        bh_start = data.pop("businessHoursStart")
-        bh_end = data.pop("businessHoursEnd")
-        highlight_bh = data.pop("highlightBusinessHours")
-        
-        if highlight_bh:
-            data["businessHours"] = {
-                "daysOfWeek": [1, 2, 3, 4, 5],  # Monday to Friday
-                "startTime": bh_start,
-                "endTime": bh_end
-            }
-        
-        return data
