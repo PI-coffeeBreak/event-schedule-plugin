@@ -4,6 +4,10 @@ import logging
 
 logger = logging.getLogger("coffeebreak.core")
 
+PLUGIN_TITLE = "event-schedule-plugin"
+NAME = "Event Schedule Plugin"
+DESCRIPTION = "A plugin for displaying an event schedule"
+
 def register_plugin():
     ComponentRegistry.register_component(Schedule)
     logger.debug("Schedule component registered.")
