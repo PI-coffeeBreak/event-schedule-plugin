@@ -2,9 +2,8 @@ from .schemas.ui.components.schedule import Schedule
 from services.component_registry import ComponentRegistry
 import logging
 
-logger = logging.getLogger("coffeebreak.core")
+logger = logging.getLogger("coffeebreak.event-schedule-plugin")
 
-PLUGIN_TITLE = "event-schedule-plugin"
 NAME = "Event Schedule Plugin"
 DESCRIPTION = "A plugin for displaying an event schedule"
 
