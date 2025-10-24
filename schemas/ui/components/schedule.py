@@ -1,5 +1,5 @@
 from pydantic import Field
-from schemas.ui.page import BaseComponentSchema
+from coffeebreak.schemas import BaseComponent as BaseComponentSchema
 
 class Schedule(BaseComponentSchema):
     """
