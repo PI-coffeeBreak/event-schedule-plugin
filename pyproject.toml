@@ -1,0 +1,10 @@
+[tool.coffeebreak]
+identifier = "event-schedule-plugin"
+name = "Event Schedule Plugin"
+description = "A plugin for displaying an event schedule"
+components_dir = "components"
+config_page = true
+
+[[tool.coffeebreak.components]]
+name = "Schedule"
+file = "SchedulePreview.jsx"
