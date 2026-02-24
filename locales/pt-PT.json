@@ -1,0 +1,31 @@
+{
+  "title": "Agenda do Evento",
+  "activities": {
+    "noActivities": "Nenhuma atividade encontrada",
+    "trySearch": "Tente alterar os filtros de pesquisa"
+  },
+  "groupActivities": "Agrupar Atividades",
+  "hideActivities": "Ocultar Atividades",
+  "showActivities": "Mostrar Atividades",
+  "searchActivities": "Pesquisar atividades",
+  "calendar": {
+    "locale": "pt",
+    "header": {
+      "left": "prev,next today",
+      "center": "title",
+      "right": "timeGridDay,timeGridWeek,listWeek"
+    },
+    "buttonText": {
+      "today": "hoje",
+      "month": "mês",
+      "week": "semana",
+      "day": "dia",
+      "list": "lista"
+    }
+  },
+  "event": {
+    "allDay": "dia inteiro",
+    "more": "mais",
+    "noEvents": "Sem eventos"
+  }
+}

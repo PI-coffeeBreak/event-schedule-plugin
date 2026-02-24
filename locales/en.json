@@ -1,0 +1,31 @@
+{
+  "title": "Event Schedule",
+  "activities": {
+    "noActivities": "No activities found",
+    "trySearch": "Try changing your search or filters"
+  },
+  "groupActivities": "Group Activities",
+  "hideActivities": "Hide Activities",
+  "showActivities": "Show Activities",
+  "searchActivities": "Search activities",
+  "calendar": {
+    "locale": "en",
+    "header": {
+      "left": "prev,next today",
+      "center": "title",
+      "right": "timeGridDay,timeGridWeek,listWeek"
+    },
+    "buttonText": {
+      "today": "today",
+      "month": "month",
+      "week": "week",
+      "day": "day",
+      "list": "list"
+    }
+  },
+  "event": {
+    "allDay": "all-day",
+    "more": "more",
+    "noEvents": "No events"
+  }
+}
