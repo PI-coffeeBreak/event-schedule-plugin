@@ -1,3 +1,5 @@
 fileignoreconfig:
+  - filename: admin/Page.jsx
+    checksum: 833290e07eca07bcac9768b23bccbe8e181c0f0ab11adff34d6cfc240273a36a
   - filename: components/SchedulePreview.jsx
-    checksum: 1d24372deed0717d46f20337603b029b39893c9ab23115016e0c081a5a08f954
+    checksum: 358a2b2d77335ebe88e63fd43c920df6a8bae28d826dd70b69ff1006d58279af

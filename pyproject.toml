@@ -5,6 +5,11 @@ description = "A plugin for displaying an event schedule"
 components_dir = "components"
 config_page = true
 
+[tool.coffeebreak.admin_page]
+file = "admin/Page.jsx"
+route_slug = "event-schedule-plugin"
+export_name = "default"
+
 [[tool.coffeebreak.components]]
 name = "Schedule"
 file = "SchedulePreview.jsx"
