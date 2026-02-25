@@ -4,38 +4,138 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityContext } from "../../../event-app/src/contexts/ActivityContext.jsx";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { registerPluginTranslations } from "coffeebreak";
 import en from "../locales/en.json";
 import ptBR from "../locales/pt-BR.json";
 import ptPT from "../locales/pt-PT.json";
+import { getApi } from "coffeebreak/event-app";
 
 const NS = "event-schedule-plugin";
 registerPluginTranslations(NS, { en, "pt-BR": ptBR, "pt-PT": ptPT });
-import { utcToLocalDatetimeLocal } from "../../../event-app/src/utils/date";
-import {
-  fetchScheduleSettings,
-  getGroupMetadata,
-  smartGroupActivities,
-} from "../../../event-app/src/utils/activityGrouping";
-import { getApi, initApi } from "coffeebreak/event-app";
-import "../../../event-app/src/lib/i18n";
 
-let apiInitialized = false;
+const ActivityContext = createContext({ activities: [], loading: true, error: null, types: [] });
 
-function ensureApiInitialized() {
-  if (apiInitialized) {
-    return;
-  }
-
-  initApi();
-  apiInitialized = true;
+function utcToLocalDatetimeLocal(utcISOString) {
+  if (!utcISOString) return "";
+  const utcDate = new Date(utcISOString);
+  if (isNaN(utcDate.getTime())) return "";
+  const tzOffset = utcDate.getTimezoneOffset();
+  const localDate = new Date(utcDate.getTime() - tzOffset * 60000);
+  const pad = (n) => String(n).padStart(2, "0");
+  return (
+    localDate.getFullYear() +
+    "-" + pad(localDate.getMonth() + 1) +
+    "-" + pad(localDate.getDate()) +
+    "T" + pad(localDate.getHours()) +
+    ":" + pad(localDate.getMinutes())
+  );
 }
 
-ensureApiInitialized();
+const getDefaultGroupingSettings = () => ({
+  enable_grouping: true,
+  time_threshold: 15,
+  min_group_size: 2,
+  duration_variance: 0.5,
+  group_by_type: true,
+});
+
+async function fetchScheduleSettings() {
+  try {
+    const api = getApi();
+    const response = await api.get("/ui/plugin-config/event-schedule-plugin");
+    const schema = response.data;
+    if (schema && schema.inputs && Array.isArray(schema.inputs)) {
+      const settings = {};
+      schema.inputs.forEach((input) => {
+        if (input.default !== undefined) settings[input.name] = input.default;
+      });
+      return {
+        enable_grouping: settings.enable_grouping ?? true,
+        time_threshold: settings.time_threshold ?? 15,
+        min_group_size: settings.min_group_size ?? 2,
+        duration_variance: settings.duration_variance ?? 0.5,
+        group_by_type: settings.group_by_type ?? true,
+      };
+    }
+    return getDefaultGroupingSettings();
+  } catch {
+    return getDefaultGroupingSettings();
+  }
+}
+
+function canGroupActivities(activity1, activity2, settings, types) {
+  const { time_threshold = 15, duration_variance = 0.5, group_by_type = true } = settings;
+  const type1 = types?.find((item) => item.id === activity1.type_id);
+  const type2 = types?.find((item) => item.id === activity2.type_id);
+  if (type1?.grouping?.canGroup === false || type2?.grouping?.canGroup === false) return false;
+  if (group_by_type && activity1.type_id !== activity2.type_id) return false;
+  const time1 = new Date(activity1.date).getTime();
+  const time2 = new Date(activity2.date).getTime();
+  const duration1 = activity1.duration || 30;
+  const duration2 = activity2.duration || 30;
+  const end1 = time1 + duration1 * 60000;
+  const end2 = time2 + duration2 * 60000;
+  const isConsecutive =
+    Math.abs(end1 - time2) <= 5 * 60000 || Math.abs(end2 - time1) <= 5 * 60000;
+  if (isConsecutive) return true;
+  if (Math.abs(time1 - time2) / (1000 * 60) > time_threshold) return false;
+  const durationDiff = Math.abs(duration1 - duration2);
+  const maxDuration = Math.max(duration1, duration2);
+  return durationDiff / maxDuration <= duration_variance;
+}
+
+function smartGroupActivities(activities, types, settings) {
+  const { enable_grouping = true, min_group_size = 2 } = settings || {};
+  if (!enable_grouping) return { groups: [], standalone: [...activities] };
+  const sorted = [...activities].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const groups = [];
+  const processed = new Set();
+  const standalone = [];
+  sorted.forEach((activity, index) => {
+    if (processed.has(activity.id)) return;
+    const type = types?.find((item) => item.id === activity.type_id);
+    if (type?.grouping?.canGroup === false) {
+      standalone.push(activity);
+      processed.add(activity.id);
+      return;
+    }
+    const group = [activity];
+    processed.add(activity.id);
+    for (let i = index + 1; i < sorted.length; i++) {
+      const candidate = sorted[i];
+      if (processed.has(candidate.id)) continue;
+      if (group.some((ga) => canGroupActivities(ga, candidate, settings, types))) {
+        group.push(candidate);
+        processed.add(candidate.id);
+      }
+    }
+    if (group.length >= min_group_size) {
+      groups.push(group);
+    } else {
+      group.forEach((act) => { standalone.push(act); processed.delete(act.id); });
+    }
+  });
+  return { groups, standalone };
+}
+
+function getGroupMetadata(group) {
+  if (!group || group.length === 0) return null;
+  const startTimes = group.map((a) => new Date(a.date));
+  const endTimes = group.map((a) => new Date(new Date(a.date).getTime() + (a.duration || 30) * 60000));
+  const earliestStart = new Date(Math.min(...startTimes));
+  const latestEnd = new Date(Math.max(...endTimes));
+  return {
+    count: group.length,
+    startTime: earliestStart,
+    endTime: latestEnd,
+    rooms: [...new Set(group.map((a) => a.room).filter(Boolean))],
+    typeCount: [...new Set(group.map((a) => a.type_id))].length,
+    duration: (latestEnd - earliestStart) / (1000 * 60),
+  };
+}
 
 const TOOLBAR_BUTTON_GROUPS = {
   NAV_PREV_NEXT: "prev,next",
