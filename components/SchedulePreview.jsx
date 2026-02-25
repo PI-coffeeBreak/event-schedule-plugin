@@ -804,9 +804,9 @@ function ScheduleComponent({
         right: TOOLBAR_BUTTON_GROUPS.MOBILE_VIEWS,
       }
     : {
-        left: t("schedule.calendar.header.left"),
-        center: t("schedule.calendar.header.center"),
-        right: t("schedule.calendar.header.right"),
+        left: t("calendar.header.left"),
+        center: t("calendar.header.center"),
+        right: t("calendar.header.right"),
       };
 
   const responsiveFooterToolbar = isMobile
@@ -822,36 +822,36 @@ function ScheduleComponent({
       };
 
   const mobileButtonText = {
-    today: t("schedule.calendar.buttonText.today"),
-    month: t("schedule.calendar.buttonText.month"),
-    week: t("schedule.calendar.buttonText.week"),
-    day: t("schedule.calendar.buttonText.day"),
-    list: t("schedule.calendar.buttonText.list"),
-    timeGridDay: t("schedule.calendar.buttonText.day"),
-    timeGridWeek: t("schedule.calendar.buttonText.week"),
-    dayGridMonth: t("schedule.calendar.buttonText.month"),
-    dayGridDay: t("schedule.calendar.buttonText.day"),
-    listDay: t("schedule.calendar.buttonText.list"),
-    listWeek: t("schedule.calendar.buttonText.list"),
+    today: t("calendar.buttonText.today"),
+    month: t("calendar.buttonText.month"),
+    week: t("calendar.buttonText.week"),
+    day: t("calendar.buttonText.day"),
+    list: t("calendar.buttonText.list"),
+    timeGridDay: t("calendar.buttonText.day"),
+    timeGridWeek: t("calendar.buttonText.week"),
+    dayGridMonth: t("calendar.buttonText.month"),
+    dayGridDay: t("calendar.buttonText.day"),
+    listDay: t("calendar.buttonText.list"),
+    listWeek: t("calendar.buttonText.list"),
   };
 
   const desktopButtonText = {
-    today: t("schedule.calendar.buttonText.today"),
-    month: t("schedule.calendar.buttonText.month"),
-    week: t("schedule.calendar.buttonText.week"),
-    day: t("schedule.calendar.buttonText.day"),
-    list: t("schedule.calendar.buttonText.list"),
-    timeGridDay: t("schedule.calendar.buttonText.day"),
-    timeGridWeek: t("schedule.calendar.buttonText.week"),
-    dayGridMonth: t("schedule.calendar.buttonText.month"),
-    dayGridDay: t("schedule.calendar.buttonText.day"),
-    listDay: t("schedule.calendar.buttonText.list"),
-    listWeek: t("schedule.calendar.buttonText.list"),
+    today: t("calendar.buttonText.today"),
+    month: t("calendar.buttonText.month"),
+    week: t("calendar.buttonText.week"),
+    day: t("calendar.buttonText.day"),
+    list: t("calendar.buttonText.list"),
+    timeGridDay: t("calendar.buttonText.day"),
+    timeGridWeek: t("calendar.buttonText.week"),
+    dayGridMonth: t("calendar.buttonText.month"),
+    dayGridDay: t("calendar.buttonText.day"),
+    listDay: t("calendar.buttonText.list"),
+    listWeek: t("calendar.buttonText.list"),
   };
 
   const defaultButtonText = isMobile ? mobileButtonText : desktopButtonText;
 
-  const translatedLocale = t("schedule.calendar.locale");
+  const translatedLocale = t("calendar.locale");
   const calendarLocale =
     translatedLocale && translatedLocale !== "schedule.calendar.locale"
       ? translatedLocale
@@ -901,7 +901,7 @@ function ScheduleComponent({
     <div className="bg-base-100 overflow-hidden">
       {(title || description) && (
         <div className="p-4 border-b border-base-300">
-          {title && <h2 className="text-2xl text-primary font-bold">{t("schedule.title")}</h2>}
+          {title && <h2 className="text-2xl text-primary font-bold">{t("title")}</h2>}
           {description && <p className="text-base-content/70 mt-1">{description}</p>}
         </div>
       )}
@@ -1070,9 +1070,9 @@ function ScheduleComponent({
           height={"auto"}
           aspectRatio={isMobile ? 0.8 : 1.35}
           titleFormat={titleFormat}
-          allDayText={t("schedule.event.allDay")}
-          moreLinkText={t("schedule.event.more")}
-          noEventsText={t("schedule.event.noEvents")}
+          allDayText={t("event.allDay")}
+          moreLinkText={t("event.more")}
+          noEventsText={t("event.noEvents")}
         />
       </div>
 
