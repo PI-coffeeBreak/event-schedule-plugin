@@ -238,12 +238,12 @@ const EventModal = ({ event, onClose }) => {
         )}
 
         <div className="modal-action flex flex-row gap-2 mt-4 justify-end">
-          <button
+          <a
             className="btn btn-secondary rounded-xl mr-auto"
-            onClick={() => window.location.assign(`/activity/${event.id}`)}
+            href={`/activity/${event.id}`}
           >
             View Activity Details
-          </button>
+          </a>
           <form method="dialog">
             <button className="btn btn-primary rounded-xl">Close</button>
           </form>
@@ -316,10 +316,10 @@ const GroupedActivityModal = ({ event, onClose }) => {
         <div className="px-4 sm:px-6 py-3 sm:py-4 overflow-y-auto max-h-[calc(85vh-180px)]">
           <div className="space-y-1">
             {groupedActivities.map((activity) => (
-              <div
+              <a
                 key={activity.id}
                 className="group relative pl-3 pr-2 py-2 sm:py-3 rounded-lg hover:bg-base-200 transition-all duration-200 cursor-pointer border-l-4 border-transparent hover:border-primary"
-                onClick={() => window.location.assign(`/activity/${activity.id}`)}
+                href={`/activity/${activity.id}`}
               >
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
@@ -459,7 +459,7 @@ const GroupedActivityModal = ({ event, onClose }) => {
                     </svg>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
